@@ -1,5 +1,10 @@
 {
-    "repository": "",
-    "username": "",
-    "password": ""
+    "git": {
+        "repository": "",
+        "username": "",
+        "password": ""
+    },
+    "site": {
+        "build": "jekyll build"
+    }
 }

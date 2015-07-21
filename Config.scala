@@ -6,8 +6,14 @@ object Config {
 
   private val config = Json.parse(Source.fromFile("config.json").mkString)
 
-  val repository = config.repository.as[String]
-  val username = config.username.as[String]
-  val password = config.password.as[String]
+  object git {
+    val repository = config.git.repository.as[String]
+    val username = config.git.username.as[String]
+    val password = config.git.password.as[String]
+  }
+
+  object site {
+    val build = config.site.build.as[String]
+  }
 
 }

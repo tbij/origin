@@ -2,6 +2,7 @@ import java.nio.file.{Files, Paths}
 import java.nio.charset.StandardCharsets
 import scala.io.Source
 import scala.collection.JavaConversions._
+import scala.sys.process.Process
 import scala.util.Try
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
@@ -31,21 +32,26 @@ object Repository {
     Try {
       val path = Paths.get(repository + "/" + directory + "/" + file)
       Files.write(path, contents.getBytes(StandardCharsets.UTF_8))
+      generate
     }
   }
 
   private def update: Unit = {
-    val credentials = new UsernamePasswordCredentialsProvider(Config.username, Config.password)
+    val credentials = new UsernamePasswordCredentialsProvider(Config.git.username, Config.git.password)
     if (Files.isDirectory(Paths.get(repository))) new Git(new FileRepository(repository + "/.git"))
       .pull()
       .setCredentialsProvider(credentials)
       .call()
     else Git.cloneRepository()
       .setDirectory(Paths.get(repository).toFile)
-      .setURI(Config.repository)
+      .setURI(Config.git.repository)
       .setCredentialsProvider(credentials)
       .call()
       .close()
+  }
+
+  private def generate: Unit = {
+    Process(Config.site.build, Paths.get(repository).toFile).!
   }
 
 }
