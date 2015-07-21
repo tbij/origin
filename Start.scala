@@ -1,19 +1,24 @@
 import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.servlet.ServletContextHandler
-import org.eclipse.jetty.servlet.ServletHolder
-import org.eclipse.jetty.server.handler.{ResourceHandler, HandlerList}
+import org.eclipse.jetty.server.handler.{ResourceHandler, ContextHandler, HandlerList}
+import org.eclipse.jetty.servlet.{ServletHolder, ServletContextHandler}
 
 object Start extends App {
 
-  val resourceHandler = new ResourceHandler()
-  resourceHandler.setResourceBase("public")
+  val admin = new ResourceHandler()
+  admin.setResourceBase("public")
 
-  val servletHandler = new ServletContextHandler()
-  servletHandler.addServlet(new ServletHolder(Dispatcher), "/*")
-  servletHandler.setContextPath("/api/")
+  val preview = new ContextHandler()
+  val previewResource = new ResourceHandler()
+  previewResource.setResourceBase(Config.site.directory + "/" + Config.site.location)
+  preview.setHandler(previewResource)
+  preview.setContextPath("/preview")
+
+  val api = new ServletContextHandler()
+  api.addServlet(new ServletHolder(Dispatcher), "/*")
+  api.setContextPath("/api")
 
   val handlers = new HandlerList()
-  handlers.setHandlers(Array(servletHandler, resourceHandler))
+  handlers.setHandlers(Array(admin, preview, api))
 
   val server = new Server(8000)
   server.setHandler(handlers)

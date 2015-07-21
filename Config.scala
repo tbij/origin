@@ -14,6 +14,8 @@ object Config {
 
   object site {
     val build = config.site.build.as[String]
+    val directory = config.site.directory.as[String]
+    val location = config.site.location.as[String]
   }
 
 }

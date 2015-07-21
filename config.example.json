@@ -5,6 +5,8 @@
         "password": ""
     },
     "site": {
-        "build": "jekyll build"
+        "build": "jekyll build",
+        "directory": ".repository",
+        "location": "_site"
     }
 }
