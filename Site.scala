@@ -11,23 +11,23 @@ import org.eclipse.jgit.internal.storage.file.FileRepository
 object Site {
 
   def list(directory: String): Try[Seq[String]] = {
-    update
     Try {
+      update
       val path = Paths.get(Config.site.directory + "/" + directory)
       Files.newDirectoryStream(path).toSeq.map(_.toString.split("/").last)
     }
   }
 
   def read(directory: String, file: String): Try[String] = {
-    update
     Try {
+      update
       Source.fromFile(Config.site.directory + "/" + directory + "/" + file).mkString
     }
   }
 
   def write(directory: String, file: String, contents: String): Try[Unit] = {
-    update
     Try {
+      update
       val path = Paths.get(Config.site.directory + "/" + directory + "/" + file)
       Files.write(path, contents.getBytes(StandardCharsets.UTF_8))
       generate
@@ -36,6 +36,7 @@ object Site {
 
   def publish(directory: String, file: String): Try[Unit] = {
     Try {
+      update
       val git = new Git(new FileRepository(Config.site.directory + "/.git"))
       git.add().addFilepattern(Config.site.directory + "/" + directory + "/" + file).call()
       git.commit().setMessage("Published").call()
