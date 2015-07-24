@@ -20,10 +20,17 @@ object Dispatcher extends ScalatraServlet {
     }
   }
 
-  post("/*/:file") {
+  put("/*/:file") {
     Repository.write(params("splat"), params("file"), request.body) match {
       case Success(_) => NoContent()
-      case Failure(e) => InternalServerError()
+      case Failure(e) => InternalServerError(e)
+    }
+  }
+
+  post("/*/:file") {
+    Repository.publish(params("splat"), params("file")) match {
+      case Success(_) => NoContent()
+      case Failure(e) => InternalServerError(e)
     }
   }
 

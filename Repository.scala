@@ -34,18 +34,19 @@ object Repository {
     }
   }
 
+  def publish(directory: String, file: String): Try[Unit] = {
+    Try {
+      val git = new Git(new FileRepository(Config.site.directory + "/.git"))
+      git.add().addFilepattern(Config.site.directory + "/" + directory + "/" + file).call()
+      git.commit().setMessage("Published").call()
+      git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(Config.git.username, Config.git.password)).call()
+    }
+  }
+
   private def update: Unit = {
-    val credentials = new UsernamePasswordCredentialsProvider(Config.git.username, Config.git.password)
-    if (Files.isDirectory(Paths.get(Config.site.directory))) new Git(new FileRepository(Config.site.directory + "/.git"))
-      .pull()
-      .setCredentialsProvider(credentials)
-      .call()
-    else Git.cloneRepository()
-      .setDirectory(Paths.get(Config.site.directory).toFile)
-      .setURI(Config.git.repository)
-      .setCredentialsProvider(credentials)
-      .call()
-      .close()
+    val exists = Files.isDirectory(Paths.get(Config.site.directory))
+    if (exists) new Git(new FileRepository(Config.site.directory + "/.git")).pull().call()
+    else Git.cloneRepository().setDirectory(Paths.get(Config.site.directory).toFile).setURI(Config.git.repository).call().close()
   }
 
   private def generate: Unit = {
