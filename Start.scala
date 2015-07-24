@@ -14,7 +14,7 @@ object Start extends App {
   preview.setContextPath("/preview")
 
   val api = new ServletContextHandler()
-  api.addServlet(new ServletHolder(Dispatcher), "/*")
+  api.addServlet(new ServletHolder(Routes), "/*")
   api.setContextPath("/api")
 
   val handlers = new HandlerList()

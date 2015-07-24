@@ -4,31 +4,31 @@ import rapture.json.jsonBackends.argonaut._
 import org.scalatra.ScalatraServlet
 import org.scalatra.{NotFound, NoContent, InternalServerError}
 
-object Dispatcher extends ScalatraServlet {
+object Routes extends ScalatraServlet {
 
   get("/*") {
-    Repository.list(params("splat")) match {
+    Site.list(params("splat")) match {
       case Success(list) => Json(list)
       case Failure(e) => NotFound("Path not found")
     }
   }
 
   get("/*/:file") {
-    Repository.read(params("splat"), params("file")) match {
+    Site.read(params("splat"), params("file")) match {
       case Success(contents) => if (params("file").toLowerCase endsWith ".json") Json.parse(contents) else contents
       case Failure(e) => pass()
     }
   }
 
   put("/*/:file") {
-    Repository.write(params("splat"), params("file"), request.body) match {
+    Site.write(params("splat"), params("file"), request.body) match {
       case Success(_) => NoContent()
       case Failure(e) => InternalServerError(e)
     }
   }
 
   post("/*/:file") {
-    Repository.publish(params("splat"), params("file")) match {
+    Site.publish(params("splat"), params("file")) match {
       case Success(_) => NoContent()
       case Failure(e) => InternalServerError(e)
     }

@@ -8,7 +8,7 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.eclipse.jgit.internal.storage.file.FileRepository
 
-object Repository {
+object Site {
 
   def list(directory: String): Try[Seq[String]] = {
     update
