@@ -1,4 +1,10 @@
 {
+    "auth": {
+        "key": "",
+        "domain": "",
+        "clientId": "",
+        "clientSecret": ""
+    },
     "git": {
         "repository": "",
         "username": "",

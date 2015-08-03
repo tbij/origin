@@ -1,8 +1,7 @@
 import scala.util.{Try, Success, Failure}
 import rapture.json.Json
 import rapture.json.jsonBackends.argonaut._
-import org.scalatra.ScalatraServlet
-import org.scalatra.{NotFound, NoContent, InternalServerError}
+import org.scalatra.{ScalatraServlet, NotFound, NoContent, InternalServerError}
 
 object Routes extends ScalatraServlet {
 

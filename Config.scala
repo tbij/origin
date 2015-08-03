@@ -6,6 +6,13 @@ object Config {
 
   private val config = Json.parse(Source.fromFile("config.json").mkString)
 
+  object auth {
+    val key = config.auth.key.as[String]
+    val domain = config.auth.domain.as[String]
+    val clientId = config.auth.clientId.as[String]
+    val clientSecret = config.auth.clientSecret.as[String]
+  }
+
   object git {
     val repository = config.git.repository.as[String]
     val username = config.git.username.as[String]

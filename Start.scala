@@ -1,27 +1,29 @@
+import java.util.EnumSet
+import javax.servlet.DispatcherType
 import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.server.handler.{ResourceHandler, ContextHandler, HandlerList}
-import org.eclipse.jetty.servlet.{ServletHolder, ServletContextHandler}
+import org.eclipse.jetty.servlet.{ServletHolder, FilterHolder, DefaultServlet, ServletContextHandler}
 
 object Start extends App {
 
-  val admin = new ResourceHandler()
-  admin.setResourceBase("public")
+  val authenticator = new FilterHolder(Authenticator)
 
-  val preview = new ContextHandler()
-  val previewResource = new ResourceHandler()
-  previewResource.setResourceBase(Config.site.directory + "/" + Config.site.location)
-  preview.setHandler(previewResource)
-  preview.setContextPath("/preview")
+  val routes = new ServletHolder(Routes)
 
-  val api = new ServletContextHandler()
-  api.addServlet(new ServletHolder(Routes), "/*")
-  api.setContextPath("/api")
+  val interface = new ServletHolder(new DefaultServlet())
+  interface.setInitParameter("resourceBase", "public")
 
-  val handlers = new HandlerList()
-  handlers.setHandlers(Array(admin, preview, api))
+  val preview = new ServletHolder(new DefaultServlet())
+  preview.setInitParameter("resourceBase", Config.site.directory + "/" + Config.site.location)
+  preview.setInitParameter("pathInfoOnly", "true")
+
+  val handler = new ServletContextHandler(ServletContextHandler.SESSIONS)
+  handler.addFilter(authenticator, "/*", EnumSet.of(DispatcherType.REQUEST))
+  handler.addServlet(routes, "/api/*")
+  handler.addServlet(interface, "/*")
+  handler.addServlet(preview, "/preview/*")
 
   val server = new Server(8000)
-  server.setHandler(handlers)
+  server.setHandler(handler)
   server.start()
 
 }
