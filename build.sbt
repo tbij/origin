@@ -1,5 +1,7 @@
 scalaVersion := "2.11.7"
 
+assemblyOutputPath in assembly := file("target/origin.jar")
+
 libraryDependencies ++= Seq(
   "org.eclipse.jgit" % "org.eclipse.jgit" % "4.0.1.201506240215-r",
   "com.propensive" %% "rapture-json-argonaut" % "1.1.0",
