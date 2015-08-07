@@ -1,5 +1,9 @@
 scalaVersion := "2.11.7"
 
+scalaSource in Compile := baseDirectory.value / "app"
+
+unmanagedResourceDirectories in Compile += baseDirectory.value / "interface"
+
 assemblyOutputPath in assembly := file("target/origin.jar")
 
 libraryDependencies ++= Seq(

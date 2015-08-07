@@ -10,7 +10,7 @@ object Start extends App {
   val routes = new ServletHolder(Routes)
 
   val interface = new ServletHolder(new DefaultServlet())
-  interface.setInitParameter("resourceBase", "public")
+  interface.setInitParameter("resourceBase", "interface")
 
   val preview = new ServletHolder(new DefaultServlet())
   preview.setInitParameter("resourceBase", Config.site.directory + "/" + Config.site.location)
