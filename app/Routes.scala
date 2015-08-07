@@ -5,6 +5,8 @@ import org.scalatra.{ScalatraServlet, NotFound, NoContent, InternalServerError}
 
 object Routes extends ScalatraServlet {
 
+  def user = User.fromToken(cookies("token")).get
+
   get("/*") {
     Site.list(params("splat")) match {
       case Success(list) => Json(list)
@@ -27,7 +29,7 @@ object Routes extends ScalatraServlet {
   }
 
   post("/*/:file") {
-    Site.publish(params("splat"), params("file")) match {
+    Site.publish(params("splat"), params("file"), user) match {
       case Success(_) => NoContent()
       case Failure(e) => InternalServerError(e)
     }

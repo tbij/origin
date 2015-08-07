@@ -34,12 +34,12 @@ object Site {
     }
   }
 
-  def publish(directory: String, file: String): Try[Unit] = {
+  def publish(directory: String, file: String, user: User): Try[Unit] = {
     Try {
       update
       val git = new Git(new FileRepository(Config.site.directory + "/.git"))
       git.add().addFilepattern(Config.site.directory + "/" + directory + "/" + file).call()
-      git.commit().setMessage("Published").call()
+      git.commit().setAuthor(user.name, user.email).setMessage("Published").call()
       git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(Config.git.username, Config.git.password)).call()
     }
   }
