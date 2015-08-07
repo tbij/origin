@@ -10,5 +10,5 @@ jar-run: jar
 docker: jar
 	@docker build -t origin .
 
-docker-run: build
+docker-run: docker
 	@docker run -p 8000:8000 -it origin
