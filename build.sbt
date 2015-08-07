@@ -12,6 +12,6 @@ libraryDependencies ++= Seq(
   "com.auth0" % "java-jwt" % "2.1.0",
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
   "org.scalatra" %% "scalatra" % "2.3.1",
-  "org.eclipse.jetty" % "jetty-webapp" % "9.2.9.v20150224",
-  "org.eclipse.jetty" % "jetty-plus" % "9.2.9.v20150224"
+  "org.eclipse.jetty" % "jetty-webapp" % "9.3.2.v20150730",
+  "org.eclipse.jetty" % "jetty-plus" % "9.3.2.v20150730"
 )
