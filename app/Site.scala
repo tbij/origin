@@ -51,7 +51,7 @@ object Site {
   }
 
   private def generate: Unit = {
-    Process(Config.site.build, Paths.get(Config.site.directory).toFile).!
+    Process(Config.site.builder, Paths.get(Config.site.directory).toFile).!
   }
 
 }

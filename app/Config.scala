@@ -20,9 +20,12 @@ object Config {
   }
 
   object site {
-    val build = config.site.build.as[String]
     val directory = config.site.directory.as[String]
-    val location = config.site.location.as[String]
+    val builder = config.site.builder.as[String]
+    val locationOfBuilt = config.site.locationOfBuilt.as[String]
+    val locationOfPosts = config.site.locationOfPosts.as[String]
+    val locationOfPages = config.site.locationOfPages.as[String]
+    val locationOfData = config.site.locationOfData.as[String]
   }
 
 }

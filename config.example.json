@@ -11,8 +11,11 @@
         "password": ""
     },
     "site": {
-        "build": "jekyll build",
         "directory": ".repository",
-        "location": "_site"
+        "builder": "jekyll build",
+        "locationOfBuilt": "_site",
+        "locationOfPosts": "_posts",
+        "locationOfPages": ".",
+        "locationOfData": "_data"
     }
 }

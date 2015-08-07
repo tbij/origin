@@ -13,7 +13,7 @@ object Start extends App {
   interface.setInitParameter("resourceBase", "interface")
 
   val preview = new ServletHolder(new DefaultServlet())
-  preview.setInitParameter("resourceBase", Config.site.directory + "/" + Config.site.location)
+  preview.setInitParameter("resourceBase", Config.site.directory + "/" + Config.site.locationOfBuilt)
   preview.setInitParameter("pathInfoOnly", "true")
 
   val handler = new ServletContextHandler(ServletContextHandler.SESSIONS)
