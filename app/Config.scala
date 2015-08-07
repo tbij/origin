@@ -20,7 +20,7 @@ object Config {
   }
 
   object site {
-    val directory = config.site.directory.as[String]
+    val directory = ".repository"
     val builder = config.site.builder.as[String]
     val locationOfBuilt = config.site.locationOfBuilt.as[String]
     val locationOfPosts = config.site.locationOfPosts.as[String]

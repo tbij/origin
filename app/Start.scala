@@ -5,6 +5,9 @@ import org.eclipse.jetty.servlet.{ServletHolder, FilterHolder, DefaultServlet, S
 
 object Start extends App {
 
+  Site.update
+  Site.generate
+
   val authenticator = new FilterHolder(Authenticator)
 
   val routes = new ServletHolder(Routes)
@@ -16,7 +19,7 @@ object Start extends App {
   preview.setInitParameter("resourceBase", Config.site.directory + "/" + Config.site.locationOfBuilt)
   preview.setInitParameter("pathInfoOnly", "true")
 
-  val handler = new ServletContextHandler(ServletContextHandler.SESSIONS)
+  val handler = new ServletContextHandler()
   handler.addFilter(authenticator, "/*", EnumSet.of(DispatcherType.REQUEST))
   handler.addServlet(routes, "/api/*")
   handler.addServlet(interface, "/*")

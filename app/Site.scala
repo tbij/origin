@@ -44,13 +44,14 @@ object Site {
     }
   }
 
-  private def update: Unit = {
+  def update: Unit = {
     val exists = Files.isDirectory(Paths.get(Config.site.directory))
     if (exists) new Git(new FileRepository(Config.site.directory + "/.git")).pull().call()
     else Git.cloneRepository().setDirectory(Paths.get(Config.site.directory).toFile).setURI(Config.git.repository).call().close()
   }
 
-  private def generate: Unit = {
+  def generate: Unit = {
+    println(Paths.get(Config.site.directory).toFile)
     Process(Config.site.builder, Paths.get(Config.site.directory).toFile).!
   }
 
