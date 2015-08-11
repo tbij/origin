@@ -2,7 +2,7 @@ scalaVersion := "2.11.7"
 
 scalaSource in Compile := baseDirectory.value / "app"
 
-resourceDirectory in Compile := baseDirectory.value
+resourceDirectory in Compile := file(".")
 
 includeFilter in unmanagedResources in Compile := "*.html" | "*.css" | "*.js"
 
