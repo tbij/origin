@@ -6,7 +6,6 @@ resourceDirectory in Compile := baseDirectory.value
 
 includeFilter in unmanagedResources in Compile := "*.html" | "*.css" | "*.js"
 
-
 assemblyOutputPath in assembly := file("target/origin.jar")
 
 libraryDependencies ++= Seq(
