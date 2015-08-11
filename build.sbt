@@ -2,7 +2,10 @@ scalaVersion := "2.11.7"
 
 scalaSource in Compile := baseDirectory.value / "app"
 
-unmanagedResourceDirectories in Compile += baseDirectory.value / "interface"
+resourceDirectory in Compile := baseDirectory.value
+
+includeFilter in unmanagedResources in Compile := "*.html" | "*.css" | "*.js"
+
 
 assemblyOutputPath in assembly := file("target/origin.jar")
 
