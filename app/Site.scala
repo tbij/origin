@@ -38,16 +38,16 @@ object Site {
     Try {
       update
       val git = new Git(new FileRepository(Config.site.directory + "/.git"))
-      git.add().addFilepattern(directory + "/" + file).call()
-      git.commit().setAuthor(user.name, user.email).setMessage("Published").call()
-      git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(Config.git.username, Config.git.password)).call()
+      git.add.addFilepattern(directory + "/" + file).call()
+      git.commit.setAuthor(user.name, user.email).setMessage("Published").call()
+      git.push.setCredentialsProvider(new UsernamePasswordCredentialsProvider(Config.git.username, Config.git.password)).call()
     }
   }
 
   def update: Unit = {
     val exists = Files.isDirectory(Paths.get(Config.site.directory))
-    if (exists) new Git(new FileRepository(Config.site.directory + "/.git")).pull().call()
-    else Git.cloneRepository().setDirectory(Paths.get(Config.site.directory).toFile).setURI(Config.git.repository).call().close()
+    if (exists) new Git(new FileRepository(Config.site.directory + "/.git")).pull.call()
+    else Git.cloneRepository.setDirectory(Paths.get(Config.site.directory).toFile).setURI(Config.git.repository).call().close()
   }
 
   def generate: Unit = {
