@@ -1,5 +1,5 @@
 
-.PHONY: jar jar-run docker docker-run
+.PHONY: jar jar-run docker docker-run create-dev
 
 jar:
 	@sbt assembly
@@ -12,3 +12,6 @@ docker: jar
 
 docker-run: docker
 	@docker run -p 8000:8000 -it origin
+
+create-dev:
+	@docker-machine create --driver virtualbox origin-dev
