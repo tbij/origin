@@ -4,7 +4,7 @@ scalaSource in Compile := baseDirectory.value / "app"
 
 resourceDirectory in Compile := file(".")
 
-includeFilter in unmanagedResources in Compile := "*.html" | "*.css" | "*.js"
+includeFilter in unmanagedResources in Compile := "*.html" | "*.css" | "*.js" // todo exclude target, or ends up recursive!
 
 assemblyOutputPath in assembly := file("target/origin.jar")
 
