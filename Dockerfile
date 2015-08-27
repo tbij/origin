@@ -1,5 +1,9 @@
 FROM java:8
 
+RUN apt-get update
+RUN apt-get install -y make gcc nodejs ruby-dev rubygems
+RUN gem install jekyll
+
 COPY target/origin.jar origin.jar
 COPY config.json config.json
 

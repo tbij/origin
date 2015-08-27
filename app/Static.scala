@@ -1,4 +1,6 @@
-import java.nio.file.{Paths, Path, Files}
+import java.net.URI
+import java.nio.file.{FileSystems, FileSystem, Path, Files}
+import scala.util.Try
 import scala.io.Source
 import scala.collection.JavaConversions._
 import org.scalatra.{ScalatraServlet, ApiFormats, NotFound}
@@ -9,9 +11,9 @@ class Static(source: String, single: Boolean = false) extends ScalatraServlet wi
   addMimeMapping("image/jpeg", "jpeg")
   addMimeMapping("image/jpeg", "jpg")
 
-  private def list(directory: String): Iterable[Path] = {
-    Files.newDirectoryStream(Paths.get(directory)) flatMap { path =>
-      if (Files.isDirectory(path)) list(path.toString)
+  private def list(fileSystem: FileSystem, directory: String): Iterable[Path] = {
+    Files.newDirectoryStream(fileSystem.getPath(directory)) flatMap { path =>
+      if (Files.isDirectory(path)) list(fileSystem, path.toString)
       else Seq(path)
     }
   }
@@ -21,7 +23,14 @@ class Static(source: String, single: Boolean = false) extends ScalatraServlet wi
 
   get("/*") { // note that this does not support top-level content-type negotiation (eg. image/*)
     val location = params("splat")
-    val files = list(source).map(Paths.get(source).relativize).map(_.toString)
+    val (filePath, fileSystem) = {
+      if (source startsWith "jar:file") {
+        val sourcePath = source.split(".jar!")
+        (sourcePath.last, FileSystems.newFileSystem(new URI(sourcePath.head + ".jar"), Map[String, String]()))
+      }
+      else (source, FileSystems.getDefault)
+    }
+    val files = list(fileSystem, filePath).map(fileSystem.getPath(filePath).relativize).map(_.toString)
     val filesTyped = files.groupBy(filename).mapValues(_ map extension)
     val file = location match {
       case "" => "index.html"
@@ -33,9 +42,10 @@ class Static(source: String, single: Boolean = false) extends ScalatraServlet wi
       case _ if single => "index.html" // for single-page applications
       case _ => halt(NotFound())
     }
-    val path = Paths.get(source + "/" + file)
+    val path = fileSystem.getPath(filePath + "/" + file)
+    Try(fileSystem.close()) // will fail for default filesystem
     contentType = file.split('.').lastOption.flatMap(formats.get).getOrElse("text/plain")
-    path.toFile
+    path.toUri.toURL.openStream
   }
 
 }

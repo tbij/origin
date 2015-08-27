@@ -1,5 +1,5 @@
 
-.PHONY: jar jar-run docker docker-run create-dev
+.PHONY: jar jar-run docker docker-run dev-machine
 
 jar:
 	@sbt assembly
@@ -13,5 +13,8 @@ docker: jar
 docker-run: docker
 	@docker run -p 8000:8000 -it origin
 
-create-dev:
+dev-machine:
 	@docker-machine create --driver virtualbox origin-dev
+	@docker-machine stop origin-dev
+	@VBoxManage modifyvm origin-dev --natpf1 'tcp-port8000,tcp,,8000,,8000'
+	@docker-machine start origin-dev

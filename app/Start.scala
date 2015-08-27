@@ -9,7 +9,7 @@ object Start extends App {
   Site.generate
 
   private val locationOfPreview = Config.site.directory + "/" + Config.site.locationOfBuilt
-  private val locationOfInterface = this.getClass.getResource("interface").getPath
+  private val locationOfInterface = this.getClass.getResource("interface").toExternalForm
 
   private val handler = new ServletContextHandler()
   handler.addFilter(new FilterHolder(Authenticator), "/*", EnumSet.of(DispatcherType.REQUEST))
