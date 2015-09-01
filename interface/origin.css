@@ -32,6 +32,12 @@ nav h1 a {
     text-decoration: none;
 }
 
+nav hr {
+    margin: 10px 0;
+    border: none;
+    border-top: 1px solid #444;
+}
+
 nav ul {
     margin: 0;
     padding: 0;
