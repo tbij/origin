@@ -50,6 +50,7 @@ nav ul {
 
 .page {
     max-width: 1200px;
+    min-height: 500px;
     margin: 20px 40px 20px 260px;
     padding: 20px;
     border-radius: 5px;
