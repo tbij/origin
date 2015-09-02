@@ -2,11 +2,14 @@ scalaVersion := "2.11.7"
 
 scalaSource in Compile := baseDirectory.value / "app"
 
-resourceDirectory in Compile := file(".")
+assemblyOutputPath in assembly := target.value / "origin.jar"
 
-includeFilter in unmanagedResources in Compile := "*.html" | "*.css" | "*.js" // todo exclude target, or ends up recursive!
-
-assemblyOutputPath in assembly := file("target/origin.jar")
+copyResources in Compile := {
+  val from = baseDirectory.value / "interface"
+  val to = (classDirectory in Compile).value / "interface"
+  IO.copyDirectory(from, to, overwrite = true)
+  from ** "*" x Path.rebase(from, to)
+}
 
 libraryDependencies ++= Seq(
   "org.eclipse.jgit" % "org.eclipse.jgit" % "4.0.1.201506240215-r",
