@@ -41,7 +41,7 @@ class MenuFiles extends React.Component {
         this.state = this.state || { values: [] }
         const files = this.state.values.map(file => {
             const filename = file.replace('.json', '')
-            const link = React.DOM.a({ href: 'edit/' + this.props.name + '/' + filename }, 'Edit ' + filename)
+            const link = React.DOM.a({ href: '/edit/' + this.props.name + '/' + filename }, 'Edit ' + filename)
             return React.DOM.li({ key: file }, link)
         })
         return React.DOM.ul({}, files)
