@@ -9,7 +9,7 @@ class Static(source: String, single: Boolean = false) extends ScalatraServlet wi
   addMimeMapping("image/png", "png")
   addMimeMapping("image/jpeg", "jpeg")
   addMimeMapping("image/jpeg", "jpg")
-  addMimeMapping("image/svg", "svg")
+  addMimeMapping("image/svg+xml", "svg")
 
   private val (fileSystem, base) = {
     if (source startsWith "jar:file") {
