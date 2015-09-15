@@ -45,10 +45,10 @@ object Routes extends ScalatraServlet {
     }
   }
 
-  get("/state/*/:name") {
+  get("/changed/*") {
     val location = locations(params("splat"))
-    Site.state(location, params("name")) match {
-      case Success(state) => Json(state)
+    Site.changed(location) match {
+      case Success(list) => Json(list)
       case Failure(e) => NotFound("Path not found")
     }
   }

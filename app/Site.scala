@@ -10,8 +10,6 @@ import org.eclipse.jgit.internal.storage.file.FileRepository
 
 object Site {
 
-  case class State(hasChanged: Boolean)
-
   def list(directory: String): Try[Seq[String]] = {
     Try {
       update
@@ -46,11 +44,10 @@ object Site {
     }
   }
 
-  def state(directory: String, file: String): Try[State] = {
+  def changed(directory: String): Try[Seq[String]] = {
     Try {
       val git = new Git(new FileRepository(Config.site.directory + "/.git"))
-      val hasChanged = !git.status.addPath(directory + "/" + file).call().getModified().isEmpty
-      State(hasChanged)
+      git.status.addPath(directory).call().getModified.toSeq
     }
   }
 
