@@ -1,7 +1,7 @@
 import scala.util.{Try, Success, Failure}
 import rapture.json.Json
 import rapture.json.jsonBackends.argonaut._
-import org.scalatra.{ScalatraServlet, NotFound, NoContent, InternalServerError}
+import org.scalatra.{ScalatraServlet, NotFound, NoContent, BadRequest, InternalServerError}
 
 object Routes extends ScalatraServlet {
 
@@ -14,7 +14,7 @@ object Routes extends ScalatraServlet {
   )
 
   get("/files/*") {
-    val location = locations(params("splat"))
+    val location = locations.getOrElse(params("splat"), halt(BadRequest()))
     Site.list(location) match {
       case Success(list) => Json(list)
       case Failure(e) => NotFound("Path not found")
@@ -22,7 +22,7 @@ object Routes extends ScalatraServlet {
   }
 
   get("/files/*/:name") {
-    val location = locations(params("splat"))
+    val location = locations.getOrElse(params("splat"), halt(BadRequest()))
     Site.read(location, params("name")) match {
       case Success(contents) => if (params("name").toLowerCase endsWith ".json") Json.parse(contents) else contents
       case Failure(e) => pass()
@@ -30,7 +30,7 @@ object Routes extends ScalatraServlet {
   }
 
   put("/files/*/:name") {
-    val location = locations(params("splat"))
+    val location = locations.getOrElse(params("splat"), halt(BadRequest()))
     Site.write(location, params("name"), request.body) match {
       case Success(_) => NoContent()
       case Failure(e) => InternalServerError(e)
@@ -38,7 +38,7 @@ object Routes extends ScalatraServlet {
   }
 
   post("/files/*/:name") {
-    val location = locations(params("splat"))
+    val location = locations.getOrElse(params("splat"), halt(BadRequest()))
     Site.publish(location, params("name"), user) match {
       case Success(_) => NoContent()
       case Failure(e) => InternalServerError(e)
@@ -46,7 +46,7 @@ object Routes extends ScalatraServlet {
   }
 
   get("/changed/*") {
-    val location = locations(params("splat"))
+    val location = locations.getOrElse(params("splat"), halt(BadRequest()))
     Site.changed(location) match {
       case Success(list) => Json(list)
       case Failure(e) => NotFound("Path not found")
