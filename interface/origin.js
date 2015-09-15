@@ -54,11 +54,11 @@ class Publishing extends React.Component {
         this.publish = this.publish.bind(this)
     }
     publish() {
-        HTTP.post('/api/files/' + this.props.location, null, this.props.onPublish)
+        HTTP.post('/api/files/' + this.props.directory + '/' + this.props.file, null, this.props.onPublished)
     }
     render() {
         const statusMessage = React.DOM.p({}, this.props.status)
-        const publishButton = React.DOM.button({ onClick: this.publish }, 'Publish')
+        const publishButton = React.DOM.button({ onClick: this.publish, disabled: !this.props.hasChanged }, 'Publish')
         return React.DOM.div({ className: 'publishing' }, statusMessage, publishButton)
     }
 }
@@ -132,21 +132,44 @@ class FileEditor extends React.Component {
 class EditPage extends React.Component {
     constructor() {
         super()
-        this.state = { publishStatus: '' }
+        this.state = { publishStatus: '', hasChanged: false }
+        this.isChanged = this.isChanged.bind(this)
         this.saved = this.saved.bind(this)
         this.published = this.published.bind(this)
     }
+    componentWillMount() {
+        this.isChanged()
+    }
+    isChanged() {
+        HTTP.get('/api/changed/' + this.props.directory, (e, response) => {
+            if (e) console.log('Could not get change state')
+            else if (response.indexOf(this.props.file + '.json') >= 0) this.setState({ publishStatus: this.state.publishStatus, hasChanged: true })
+            else this.setState({ publishStatus: this.state.publishStatus, hasChanged: false })
+        })
+    }
     saved(e) {
-        if (e) this.setState({ publishStatus: 'Failed to save! Check your internet connection.' })
-        else this.setState({ publishStatus: 'All changes saved.' })
+        if (e) this.setState({ publishStatus: 'Failed to save! Check your internet connection.', hasChanged: this.state.hasChanged })
+        else {
+            this.setState({ publishStatus: 'All changes saved.', hasChanged: this.state.hasChanged })
+            this.isChanged()
+        }
     }
     published(e) {
-        if (e) this.setState({ publishStatus: 'Failed to publish! Check your internet connection.' })
-        else this.setState({ publishStatus: 'Published.' })
+        if (e) this.setState({ publishStatus: 'Failed to publish! Check your internet connection.', hasChanged: this.state.hasChanged })
+        else {
+            this.setState({ publishStatus: 'Published.', hasChanged: this.state.hasChanged })
+            this.isChanged()
+        }
     }
     render() {
-        const publishing = React.createElement(Publishing, { status: this.state.publishStatus, location: this.props.directory + '/' + this.props.file + '.json', onPublish: this.published })
-        const title = React.DOM.h2({}, 'Edit ' + this.props.file.replace('.json', ''))
+        const publishing = React.createElement(Publishing, {
+            status: this.state.publishStatus,
+            directory: this.props.directory,
+            file: this.props.file + '.json',
+            hasChanged: this.state.hasChanged,
+            onPublished: this.published
+        })
+        const title = React.DOM.h2({}, 'Edit ' + this.props.file)
         const hr = React.DOM.hr({})
         const editor = React.createElement(FileEditor, { location: this.props.directory + '/' + this.props.file + '.json', onChange: this.saved })
         return React.DOM.div({ className: 'edit page' }, publishing, title, hr, editor)
