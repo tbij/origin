@@ -47,7 +47,7 @@ object Site {
   def changed(directory: String): Try[Seq[String]] = {
     Try {
       val git = new Git(new FileRepository(Config.site.directory + "/.git"))
-      git.status.addPath(directory).call().getModified.toSeq
+      git.status.addPath(directory).call().getModified.toSeq.map(_.stripPrefix(directory + "/"))
     }
   }
 
