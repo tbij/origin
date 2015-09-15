@@ -34,8 +34,8 @@ class Static(source: String, single: Boolean = false) extends ScalatraServlet wi
     val files = list(fileSystem, base).map(fileSystem.getPath(base).relativize).map(_.toString)
     val filesTyped = files.groupBy(filename).mapValues(_ map extension)
     val file = location match {
-      case "" => "index.html"
-      case f if files contains f => f
+      case "" if acceptHeader.contains("text/html") || acceptHeader.contains("*/*") => "index.html"
+      case f if files.contains(f) && (formats.get(extension(location)).map(acceptHeader.contains).contains(true) || acceptHeader.contains("*/*")) => f
       case f if acceptHeader.find(filesTyped.get(f).map(formats get _).contains).isDefined => {
         f + "." + acceptHeader.flatMap(filesTyped(f).groupBy(formats).mapValues(_.head).get).head
       }
@@ -43,7 +43,7 @@ class Static(source: String, single: Boolean = false) extends ScalatraServlet wi
       case _ if single => "index.html" // for single-page applications
       case _ => halt(NotFound())
     }
-    contentType = file.split('.').lastOption.flatMap(formats.get).getOrElse("text/plain")
+    contentType = formats.get(extension(file)).getOrElse("text/plain")
     val filePath = fileSystem.getPath(base + "/" + file)
     Files.newInputStream(filePath)
   }
