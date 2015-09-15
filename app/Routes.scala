@@ -13,7 +13,7 @@ object Routes extends ScalatraServlet {
     "data" -> Config.site.locationOfData
   )
 
-  get("/*") {
+  get("/files/*") {
     val location = locations(params("splat"))
     Site.list(location) match {
       case Success(list) => Json(list)
@@ -21,27 +21,35 @@ object Routes extends ScalatraServlet {
     }
   }
 
-  get("/*/:file") {
+  get("/files/*/:name") {
     val location = locations(params("splat"))
-    Site.read(location, params("file")) match {
-      case Success(contents) => if (params("file").toLowerCase endsWith ".json") Json.parse(contents) else contents
+    Site.read(location, params("name")) match {
+      case Success(contents) => if (params("name").toLowerCase endsWith ".json") Json.parse(contents) else contents
       case Failure(e) => pass()
     }
   }
 
-  put("/*/:file") {
+  put("/files/*/:name") {
     val location = locations(params("splat"))
-    Site.write(location, params("file"), request.body) match {
+    Site.write(location, params("name"), request.body) match {
       case Success(_) => NoContent()
       case Failure(e) => InternalServerError(e)
     }
   }
 
-  post("/*/:file") {
+  post("/files/*/:name") {
     val location = locations(params("splat"))
-    Site.publish(location, params("file"), user) match {
+    Site.publish(location, params("name"), user) match {
       case Success(_) => NoContent()
       case Failure(e) => InternalServerError(e)
+    }
+  }
+
+  get("/state/*/:name") {
+    val location = locations(params("splat"))
+    Site.state(location, params("name")) match {
+      case Success(state) => Json(state)
+      case Failure(e) => NotFound("Path not found")
     }
   }
 

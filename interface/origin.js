@@ -32,7 +32,7 @@ const HTTP = {
 
 class MenuFiles extends React.Component {
     componentWillMount() {
-        HTTP.get('http://localhost:8000/api/' + this.props.name, (e, response) => {
+        HTTP.get('http://localhost:8000/api/files/' + this.props.name, (e, response) => {
             if (e) console.log('Could not load data')
             else this.setState({ values: response })
         })
@@ -54,7 +54,7 @@ class Publishing extends React.Component {
         this.publish = this.publish.bind(this)
     }
     publish() {
-        HTTP.post('/api/' + this.props.location, null, this.props.onPublish)
+        HTTP.post('/api/files/' + this.props.location, null, this.props.onPublish)
     }
     render() {
         const statusMessage = React.DOM.p({}, this.props.status)
@@ -85,14 +85,14 @@ class DashboardPage extends React.Component {
 
 class FileEditor extends React.Component {
     componentWillMount() {
-        HTTP.get('/api/' + this.props.location, (e, response) => {
+        HTTP.get('/api/files/' + this.props.location, (e, response) => {
             if (!e) this.setState(response)
         })
     }
     change(key) {
         return event => {
             const state = this.update(key, event.target.value)
-            HTTP.put('/api/' + this.props.location, state, this.props.onChange)
+            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
             return this.setState(state)
         }
     }
