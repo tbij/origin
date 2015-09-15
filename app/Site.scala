@@ -49,7 +49,7 @@ object Site {
   def state(directory: String, file: String): Try[State] = {
     Try {
       val git = new Git(new FileRepository(Config.site.directory + "/.git"))
-      val hasChanged = !git.status.addPath(directory + "/" + file).call().getChanged().isEmpty
+      val hasChanged = !git.status.addPath(directory + "/" + file).call().getModified().isEmpty
       State(hasChanged)
     }
   }
