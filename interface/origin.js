@@ -91,35 +91,93 @@ class FileEditor extends React.Component {
     }
     change(key) {
         return event => {
-            const state = this.update(key, event.target.value)
+            const state = this.update(key.slice(1), (object, key) => {
+                return Object.assign({}, object, { [key]: event.target.value })
+            })
             HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
-            return this.setState(state)
+            this.setState(state)
         }
     }
-    update(key, value, object = this.state) {
+    up(key) {
+        return () => {
+            const state = this.update(key.slice(1), (array, key) => {
+                key = Number(key)
+                if (key === 0) return array
+                const temp = array[key - 1]
+                array[key - 1] = array[key]
+                array[key] = temp
+                return array
+            })
+            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
+            this.setState(state)
+        }
+    }
+    down(key) {
+        return () => {
+            const state = this.update(key.slice(1), (array, key) => {
+                key = Number(key)
+                if (key === array.length) return array
+                const temp = array[key + 1]
+                array[key + 1] = array[key]
+                array[key] = temp
+                return array
+            })
+            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
+            this.setState(state)
+        }
+    }
+    add(key) {
+        return () => {
+            const state = this.update(key.slice(1), (array, key) => {
+                const element = Object.assign({}, array[key][0]) // a clone
+                Object.keys(element).forEach(key => element[key] = '')
+                array[key].unshift(element)
+                return array
+            })
+            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
+            this.setState(state)
+        }
+    }
+    remove(key) {
+        return () => {
+            const state = this.update(key.slice(1), (array, key) => {
+                array.splice(key, 1)
+                return array
+            })
+            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
+            this.setState(state)
+        }
+    }
+    update(key, fn, object = this.state) {
         if (key.indexOf('.') >= 0) {
             const thisKey = key.split('.')[0]
             const nextKey = key.split('.').slice(1).join('.')
-            object[thisKey] = this.update(nextKey, value, object[thisKey])
+            object[thisKey] = this.update(nextKey, fn, object[thisKey])
             return object
         }
-        else return Object.assign({}, object, { [key]: value })
+        else return fn(object, key)
     }
     fromObject(object, path = '') {
         return Object.keys(object).map(key => {
             if (object[key] instanceof Array) return [
+                React.DOM.button({ key: key + '-add', className: 'add', onClick: this.add(path + '.' + key) }, '+'),
                 React.DOM.h3({ key: key + '-title' }, key),
                 React.DOM.ol({ key: key }, this.fromObject(object[key], path + '.' + key))
             ]
-            else if (object[key] instanceof Object && object instanceof Array) return [
-                React.DOM.li({ key: key }, this.fromObject(object[key], path + '.' + key))
-            ]
+            else if (object[key] instanceof Object && object instanceof Array) {
+                const buttons = [
+                    React.DOM.button({ onClick: this.up(path + '.' + key) }, '↑'),
+                    React.DOM.button({ onClick: this.down(path + '.' + key) }, '↓'),
+                    React.DOM.button({ onClick: this.remove(path + '.' + key) }, '×')
+                ]
+                return React.DOM.li({ key: key }, buttons, this.fromObject(object[key], path + '.' + key))
+            }
             else if (object[key] instanceof Object) return [
                 React.DOM.h3({ key: key + '-title' }, key),
                 React.DOM.div({ key: key }, this.fromObject(object[key], path + '.' + key))
             ]
             else return [
-                React.DOM.label({ key: key + '-label' }, key, React.DOM.input({ key: key, value: object[key], onChange: this.change((path + '.' + key).substr(1)) }))
+                React.DOM.label({ key: key + '-label' }, key, React.DOM.input({ key: key, value: object[key], onChange: this.change(path + '.' + key) }))
             ]
         })
     }

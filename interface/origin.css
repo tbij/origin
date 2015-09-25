@@ -9,6 +9,23 @@ a {
     color: inherit;
 }
 
+button {
+    margin: 0;
+    border: none;
+    border-bottom: 2px solid #026864;
+    border-radius: 3px;
+    padding: 5px 15px;
+    background: #039a99;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+}
+
+button:enabled:active {
+    border-top: 2px solid #039a99;
+    border-bottom: none;
+}
+
 nav {
     position: fixed;
     top: 0;
@@ -73,15 +90,9 @@ nav ul {
 }
 
 .page .publishing button {
-    margin: 0;
-    border: none;
     border-bottom: 2px solid #680702;
-    border-radius: 3px;
     padding: 6px 15px 5px 15px;
     background: #9a0a03;
-    color: white;
-    font: inherit;
-    cursor: pointer;
 }
 
 .page .publishing button:enabled:active {
@@ -102,20 +113,46 @@ nav ul {
 }
 
 .page .editor h3 {
-    margin: 20px 0 5px 0;
+    margin: 0;
+    padding: 3px 0;
+    font-size: 20px;
+}
+
+.page .editor button.add {
+    float: right;
+    border-bottom: 2px solid #683b02;
+    background: #9a8b03;
+}
+
+.page .editor button.add:active {
+    border-top: 2px solid #9a8b03;
+    border-bottom: none;
 }
 
 .page .editor ol {
-    margin: 0;
+    margin: 10px 0 40px 0;
     padding-left: 25px;
 }
 
 .page .editor div,
 .page .editor li {
-    margin: 0 0 10px 0;
     padding: 0 5px;
     border: 1px solid #bbb;
     border-radius: 2px;
+}
+
+.page .editor div {
+    margin: 10px 0 40px 0;
+}
+
+.page .editor li {
+    margin: 0 0 10px 0;
+}
+
+.page .editor li button {
+    float: right;
+    clear:right;
+    margin-top: 5px;
 }
 
 .page .editor label {
@@ -124,19 +161,27 @@ nav ul {
 }
 
 .page .editor label span {
+    display: block;
     font-size: 10px;
     font-weight: bold;
     vertical-align: top;
 }
 
 .page .editor label input {
-    width: calc(100% - 8px);
     margin: 0;
     border: none;
     border-radius: 2px;
     padding: 4px;
     background: #eee;
     font: inherit;
+}
+
+.page .editor div > label input {
+        width: calc(100% - 8px);
+}
+
+.page .editor li > label input {
+        width: calc(100% - 52px);
 }
 
 .loading {
