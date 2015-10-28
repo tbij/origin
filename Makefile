@@ -1,5 +1,5 @@
 
-.PHONY: compile run local.machine local.build local.run local.kill local.delete
+.PHONY: compile run local.machine local.build local.run local.stop local.delete
 
 compile:
 	@sbt assembly
@@ -14,10 +14,10 @@ local.machine:
 local.build: compile local.machine
 	@eval `docker-machine env origin-local`; docker build -t origin .
 
-local.run: local.build local.kill
+local.run: local.build local.stop
 	@eval `docker-machine env origin-local`; docker run -itdp 8000:8000 origin
 
-local.kill:
+local.stop:
 	@eval `docker-machine env origin-local`; docker stop $$(docker ps -q) || true
 
 local.delete:
