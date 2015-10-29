@@ -24,15 +24,30 @@ local.delete:
 	@docker-machine rm -f origin-local
 
 aws.machine:
-	@docker-machine create \
+	@read -p 'VPC ID: ' vpc ;\
+	read -p 'Access key: ' accesskey ;\
+	read -p 'Secret key: ' secretkey ;\
+	groupid=$$(aws ec2 create-security-group \
+		--group-name 'origin' \
+		--description 'Origin' \
+		--vpc-id $$vpc \
+		--query 'GroupId' \
+		--output text) ;\
+	aws ec2 authorize-security-group-ingress \
+		--group-id $$groupid \
+		--protocol 'tcp' \
+		--port 80 \
+		--cidr '0.0.0.0/0' ;\
+	docker-machine create \
 		--driver amazonec2 \
-		--amazonec2-access-key '' \
-		--amazonec2-secret-key '' \
-		--amazonec2-vpc-id '' \
+		--amazonec2-access-key $$accesskey \
+		--amazonec2-secret-key $$secretkey \
+		--amazonec2-vpc-id $$vpc \
 		--amazonec2-region 'eu-west-1' \
 		--amazonec2-instance-type 't2.micro' \
+		--amazonec2-security-group 'origin' \
 		origin-aws || true
-# todo: needs to deal with cname and adding a inbound port 80 rule
+# todo: needs to deal with cname
 
 aws.build: compile aws.machine
 	@eval `docker-machine env origin-aws`; docker build -t origin .
@@ -44,4 +59,5 @@ aws.stop:
 	@eval `docker-machine env origin-aws`; docker stop $$(docker ps -q) || true
 
 aws.delete:
+	@read -p 'This will delete the AWS machine. Continue? (y/n) ' a && test $$a == 'y' || exit
 	@docker-machine rm -f origin-aws
