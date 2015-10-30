@@ -84,23 +84,28 @@ class DashboardPage extends React.Component {
 }
 
 class FileEditor extends React.Component {
+    constructor() {
+        super()
+        this.state = { data: {}, changing: -1 }
+    }
     componentWillMount() {
         HTTP.get('/api/files/' + this.props.location, (e, response) => {
-            if (!e) this.setState(response)
+            if (!e) this.setState({ data: response })
         })
     }
     change(key) {
         return event => {
-            const state = this.update(key.slice(1), (object, key) => {
+            const data = this.update(key.slice(1), (object, key) => {
                 return Object.assign({}, object, { [key]: event.target.value })
             })
-            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
-            this.setState(state)
+            clearTimeout(this.state.changing)
+            const timeout = setTimeout(() => { HTTP.put('/api/files/' + this.props.location, data, this.props.onChange) }, 500)
+            this.setState({ data: data, changing: timeout })
         }
     }
     up(key) {
         return () => {
-            const state = this.update(key.slice(1), (array, key) => {
+            const data = this.update(key.slice(1), (array, key) => {
                 key = Number(key)
                 if (key === 0) return array
                 const temp = array[key - 1]
@@ -108,13 +113,13 @@ class FileEditor extends React.Component {
                 array[key] = temp
                 return array
             })
-            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
-            this.setState(state)
+            HTTP.put('/api/files/' + this.props.location, data, this.props.onChange)
+            this.setState({ data: data })
         }
     }
     down(key) {
         return () => {
-            const state = this.update(key.slice(1), (array, key) => {
+            const data = this.update(key.slice(1), (array, key) => {
                 key = Number(key)
                 if (key === array.length) return array
                 const temp = array[key + 1]
@@ -122,33 +127,33 @@ class FileEditor extends React.Component {
                 array[key] = temp
                 return array
             })
-            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
-            this.setState(state)
+            HTTP.put('/api/files/' + this.props.location, data, this.props.onChange)
+            this.setState({ data: data })
         }
     }
     add(key) {
         return () => {
-            const state = this.update(key.slice(1), (array, key) => {
+            const data = this.update(key.slice(1), (array, key) => {
                 const element = Object.assign({}, array[key][0]) // a clone
                 Object.keys(element).forEach(key => element[key] = '')
                 array[key].unshift(element)
                 return array
             })
-            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
-            this.setState(state)
+            HTTP.put('/api/files/' + this.props.location, data, this.props.onChange)
+            this.setState({ data: data })
         }
     }
     remove(key) {
         return () => {
-            const state = this.update(key.slice(1), (array, key) => {
+            const data = this.update(key.slice(1), (array, key) => {
                 array.splice(key, 1)
                 return array
             })
-            HTTP.put('/api/files/' + this.props.location, state, this.props.onChange)
-            this.setState(state)
+            HTTP.put('/api/files/' + this.props.location, data, this.props.onChange)
+            this.setState({ data: data })
         }
     }
-    update(key, fn, object = this.state) {
+    update(key, fn, object = this.state.data) {
         if (key.indexOf('.') >= 0) {
             const thisKey = key.split('.')[0]
             const nextKey = key.split('.').slice(1).join('.')
@@ -182,8 +187,7 @@ class FileEditor extends React.Component {
         })
     }
     render() {
-        this.state = this.state || {}
-        return React.DOM.div({ className: 'editor' }, this.fromObject(this.state))
+        return React.DOM.div({ className: 'editor' }, this.fromObject(this.state.data))
     }
 }
 
@@ -201,21 +205,22 @@ class EditPage extends React.Component {
     isChanged() {
         HTTP.get('/api/changed/' + this.props.directory, (e, response) => {
             if (e) console.log('Could not get change state')
-            else if (response.indexOf(this.props.file + '.json') >= 0) this.setState({ publishStatus: this.state.publishStatus, hasChanged: true })
-            else this.setState({ publishStatus: this.state.publishStatus, hasChanged: false })
+            else if (response.indexOf(this.props.file + '.json') >= 0) this.setState({ hasChanged: true })
+            else this.setState({ hasChanged: false })
         })
     }
     saved(e) {
-        if (e) this.setState({ publishStatus: 'Failed to save! Check your internet connection.', hasChanged: this.state.hasChanged })
+        if (e) this.setState({ publishStatus: 'Failed to save! Check your internet connection.' })
         else {
-            this.setState({ publishStatus: 'All changes saved.', hasChanged: this.state.hasChanged })
+            this.setState({ publishStatus: 'All changes saved.' })
+            setTimeout(() => { if (this.state.publishStatus === 'All changes saved.') this.setState({ publishStatus: '' }) }, 10 * 1000)
             this.isChanged()
         }
     }
     published(e) {
-        if (e) this.setState({ publishStatus: 'Failed to publish! Check your internet connection.', hasChanged: this.state.hasChanged })
+        if (e) this.setState({ publishStatus: 'Failed to publish! Check your internet connection.' })
         else {
-            this.setState({ publishStatus: 'Published.', hasChanged: this.state.hasChanged })
+            this.setState({ publishStatus: 'Published.' })
             this.isChanged()
         }
     }
