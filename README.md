@@ -19,7 +19,8 @@ The `auth` section sets up how Origin should authenticate users. Origin uses Goo
 
 The `git` section describes the site you will be managing. The `git.repository` should be a HTTPS link to the Git repository where your site is stored. The `git.username` and `git.password` should be for a user that has write access to that repository.
 
-The `site` section can be left as-is if you are using Jekyll, otherwise you need to tell Origin what command it should use to build your site, and where the different types of files are located. If you are not using Jekyll you will also need to update the Dockerfile to install your static-site generator of choice before deploying.
+The `site` section can be left as-is if you are using Jekyll, otherwise you need to tell Origin what command it should use to build your site, and where the different types of files are located. If you are not using Jekyll you will also need to update the Dockerfile to install your static-site generator of choice before deploying. Note that the `site.builder` command is used for generating the preview, so will probably need to be passed a different configuration file that will need to write URLs that correctly include the `/preview/` prefix.
+
 
 ### Locally
 
