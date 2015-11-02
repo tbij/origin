@@ -26,24 +26,17 @@ class Static(source: String, single: Boolean = false) extends ScalatraServlet wi
     }
   }
 
-  private def filename(path: String) = if (path contains '.') path.split('.').head else ""
-  private def extension(path: String) = if (path contains '.') path.split('.').last else ""
-
-  get("/*") { // note that this does not support top-level content-type negotiation (eg. image/*)
+  get("/*") {
     val location = params("splat")
     val files = list(fileSystem, base).map(fileSystem.getPath(base).relativize).map(_.toString)
-    val filesTyped = files.groupBy(filename).mapValues(_ map extension)
     val file = location match {
-      case "" if acceptHeader.contains("text/html") || acceptHeader.contains("*/*") => "index.html"
-      case f if files.contains(f) && (formats.get(extension(location)).map(acceptHeader.contains).contains(true) || acceptHeader.contains("*/*")) => f
-      case f if acceptHeader.find(filesTyped.get(f).map(formats get _).contains).isDefined => {
-        f + "." + acceptHeader.flatMap(filesTyped(f).groupBy(formats).mapValues(_.head).get).head
-      }
-      case f if filesTyped.contains(f) && acceptHeader.contains("*/*") => f + "." + filesTyped(f).head
+      case "" => "index.html"
+      case f if files.contains(f) => f
+      case f if files.contains(f + ".html") => f + ".html"
       case _ if single => "index.html" // for single-page applications
       case _ => halt(NotFound())
     }
-    contentType = formats.get(extension(file)).getOrElse("text/plain")
+    contentType = formats.get(file.split('.').last).getOrElse("text/plain")
     val filePath = fileSystem.getPath(base + "/" + file)
     Files.newInputStream(filePath)
   }
