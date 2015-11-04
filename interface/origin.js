@@ -1,3 +1,6 @@
+import React from 'react'
+import Page from 'page'
+
 const HTTP = {
     get(location, callback) {
         const request = new XMLHttpRequest()
@@ -241,15 +244,15 @@ class EditPage extends React.Component {
 
 function routes() {
     const menu = React.createElement(Menu, {})
-    page('/', context => {
+    Page('/', context => {
         const page = React.createElement(DashboardPage, {})
         React.render(React.DOM.div({}, menu, page), document.body)
     })
-    page('/edit/:directory/:file', context => {
+    Page('/edit/:directory/:file', context => {
         const page = React.createElement(EditPage, context.params)
         React.render(React.DOM.div({}, menu, page), document.body)
     })
-    page()
+    Page()
 }
 
 addEventListener('DOMContentLoaded', routes())
