@@ -185,7 +185,17 @@ nav ul {
 }
 
 .loading {
-    margin: 25px;
-    font-weight: bold;
-    text-align: center;
+    width: 75px;
+    height: 75px;
+    margin: 20% auto;
+    border: 12px solid white;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: rotate 0.8s infinite linear;
+}
+
+@keyframes rotate {
+    to {
+	transform: rotate(360deg);
+    }
 }
