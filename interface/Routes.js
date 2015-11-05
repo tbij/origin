@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import Page from 'page'
 import Menu from '/Menu.js'
 import DashboardPage from '/DashboardPage.js'
@@ -10,11 +11,11 @@ export default class Routes {
 	const menu = React.createElement(Menu, {})
 	Page('/', context => {
             const page = React.createElement(DashboardPage, {})
-            React.render(React.DOM.div({}, menu, page), document.body)
+            ReactDOM.render(React.DOM.div({}, menu, page), document.body)
 	})
 	Page('/edit/:directory/:file', context => {
             const page = React.createElement(EditPage, context.params)
-            React.render(React.DOM.div({}, menu, page), document.body)
+            ReactDOM.render(React.DOM.div({}, menu, page), document.body)
 	})
 	Page()
     }
