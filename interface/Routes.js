@@ -8,7 +8,7 @@ import EditPage from '/EditPage.js'
 export default class Routes {
 
     static run() {
-        const main = document.querySelector('.main')
+        const main = document.querySelector('main')
         const menu = React.createElement(Menu, {})
         Page('/', context => {
             const page = React.createElement(DashboardPage, {})
