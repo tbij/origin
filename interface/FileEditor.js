@@ -98,9 +98,9 @@ export default class FileEditor extends React.Component {
             ]
             else if (object[key] instanceof Object && object instanceof Array) {
                 const buttons = [
-                    React.DOM.button({ onClick: this.up(path + '.' + key) }, '↑'),
-                    React.DOM.button({ onClick: this.down(path + '.' + key) }, '↓'),
-                    React.DOM.button({ onClick: this.remove(path + '.' + key) }, '×')
+                    React.DOM.button({ key: key + '-up', onClick: this.up(path + '.' + key) }, '↑'),
+                    React.DOM.button({ key: key + '-down', onClick: this.down(path + '.' + key) }, '↓'),
+                    React.DOM.button({ key: key + '-remove', onClick: this.remove(path + '.' + key) }, '×')
                 ]
                 return React.DOM.li({ key: key }, buttons, this.fromObject(object[key], path + '.' + key))
             }
