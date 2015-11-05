@@ -7,4 +7,4 @@ System.config({
     }
 })
 
-System.import('/origin.js')
+System.import('/Routes.js')
