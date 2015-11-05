@@ -8,16 +8,19 @@ import EditPage from '/EditPage.js'
 export default class Routes {
 
     static run() {
-	const menu = React.createElement(Menu, {})
-	Page('/', context => {
+        const main = document.querySelector('.main')
+        const menu = React.createElement(Menu, {})
+        Page('/', context => {
             const page = React.createElement(DashboardPage, {})
-            ReactDOM.render(React.DOM.div({}, menu, page), document.body)
-	})
-	Page('/edit/:directory/:file', context => {
+            main.classList.remove('loading')
+            ReactDOM.render(React.DOM.div({}, menu, page), main)
+        })
+        Page('/edit/:directory/:file', context => {
             const page = React.createElement(EditPage, context.params)
-            ReactDOM.render(React.DOM.div({}, menu, page), document.body)
-	})
-	Page()
+            main.classList.remove('loading')
+            ReactDOM.render(React.DOM.div({}, menu, page), main)
+        })
+        Page()
     }
 
 }
