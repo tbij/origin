@@ -1,5 +1,6 @@
-export default {
-    get(location, callback) {
+export default class HTTP {
+
+    static get(location, callback) {
         const request = new XMLHttpRequest()
         request.open('GET', location)
         request.addEventListener('load', event => {
@@ -7,8 +8,9 @@ export default {
             else callback(new Error(request.response), null)
         })
         request.send()
-    },
-    post(location, data, callback) {
+    }
+
+    static post(location, data, callback) {
         const request = new XMLHttpRequest()
         request.open('POST', location)
         request.setRequestHeader('Authorization', 'Bearer ' + document.cookie.match(/token=(.*?)(;|$)/)[1])
@@ -17,8 +19,9 @@ export default {
             else callback(new Error(request.response))
         })
         request.send(JSON.stringify(data, null, 4) + '\n')
-    },
-    put(location, data, callback) {
+    }
+
+    static put(location, data, callback) {
         const request = new XMLHttpRequest()
         request.open('PUT', location)
         request.setRequestHeader('Authorization', 'Bearer ' + document.cookie.match(/token=(.*?)(;|$)/)[1])
@@ -28,4 +31,5 @@ export default {
         })
         request.send(JSON.stringify(data, null, 4) + '\n')
     }
+
 }
