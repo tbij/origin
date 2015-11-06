@@ -1,11 +1,12 @@
 import React from 'react'
 import HTTP from '/HTTP.js'
+import Dialog from '/Dialog.js'
 
 export default class FileEditor extends React.Component {
 
     constructor() {
         super()
-        this.state = { data: {}, changing: -1 }
+        this.state = { data: {}, changing: -1, confirming: null }
     }
 
     componentWillMount() {
@@ -68,14 +69,18 @@ export default class FileEditor extends React.Component {
         }
     }
 
-    remove(key) {
+    remove(key, confirm) {
         return () => {
-            const data = this.update(key.slice(1), (array, key) => {
-                array.splice(key, 1)
-                return array
-            })
-            HTTP.put('/api/files/' + this.props.location, data, this.props.onChange)
-            this.setState({ data: data })
+            if (confirm) {
+                const data = this.update(key.slice(1), (array, key) => {
+                    array.splice(key, 1)
+                    return array
+                })
+                HTTP.put('/api/files/' + this.props.location, data, this.props.onChange)
+                this.setState({ data: data, confirming: null })
+            }
+            else if (confirm === false) this.setState({ confirming: null })
+            else if (confirm === undefined) this.setState({ confirming: key })
         }
     }
 
@@ -115,7 +120,15 @@ export default class FileEditor extends React.Component {
     }
 
     render() {
-        return React.DOM.div({ className: 'editor' }, this.fromObject(this.state.data))
+	const editor = React.DOM.div({ className: 'editor' }, this.fromObject(this.state.data))
+        const dialog = React.createElement(Dialog, {
+            text: 'Are you sure you want to remove this?',
+            acceptText: 'Remove',
+            accept: this.remove(this.state.confirming, true),
+            cancel: this.remove(this.state.confirming, false)
+        })
+        if (this.state.confirming) return React.DOM.div({}, dialog, editor)
+	else return React.DOM.div({}, editor)
     }
 
 }

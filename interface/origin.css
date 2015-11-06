@@ -184,6 +184,35 @@ nav ul {
         width: calc(100% - 52px);
 }
 
+.dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog div {
+    width: 50%;
+    margin: 20% auto;
+    padding: 20px 20px 45px 20px;
+    background: white;
+}
+
+.dialog h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+}
+
+.dialog button {
+    float: right;
+}
+
+.dialog button + button {
+    margin: 0 5px;
+}
+
 .loading {
     width: 75px;
     height: 75px;
@@ -196,6 +225,6 @@ nav ul {
 
 @keyframes rotate {
     to {
-	transform: rotate(360deg);
+        transform: rotate(360deg);
     }
 }
