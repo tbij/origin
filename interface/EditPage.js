@@ -28,8 +28,9 @@ export default class EditPage extends React.Component {
     saved(e) {
         if (e) this.setState({ publishStatus: 'Failed to save! Check your internet connection.' })
         else {
-            this.setState({ publishStatus: 'All changes saved.' })
-            setTimeout(() => { if (this.state.publishStatus === 'All changes saved.') this.setState({ publishStatus: '' }) }, 10 * 1000)
+            const status = 'All changes saved.'
+            this.setState({ publishStatus: status })
+            setTimeout(() => { if (this.state.publishStatus === status) this.setState({ publishStatus: '' }) }, 10 * 1000)
             this.isChanged()
         }
     }
@@ -37,7 +38,9 @@ export default class EditPage extends React.Component {
     published(e) {
         if (e) this.setState({ publishStatus: 'Failed to publish! Check your internet connection.' })
         else {
-            this.setState({ publishStatus: 'Published.' })
+            const status = 'Published.'
+            this.setState({ publishStatus: status })
+            setTimeout(() => { if (this.state.publishStatus === status) this.setState({ publishStatus: '' }) }, 10 * 1000)
             this.isChanged()
         }
     }
